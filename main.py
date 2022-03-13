@@ -1,8 +1,9 @@
 # Imports
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
+# Initalising
 stem = LancasterStemmer()
-
+# Imports
 import numpy
 import tflearn
 import tensorflow
@@ -10,13 +11,14 @@ import random
 import json
 import pickle
 from tensorflow.python.framework import ops
-
+# Opening the json file
 with open("data.json") as file:
     data = json.load(file)
-
+# If pickle file exits
 try:
     with open("data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
+# Else
 except:
     words = []
     labels = []
@@ -60,7 +62,7 @@ except:
         training.append(bag)
         output.append(output_row)
 
-
+#     Getting the training and output array
     training = numpy.array(training)
     output = numpy.array(output)
 
@@ -68,7 +70,7 @@ except:
         pickle.dump((words, labels, training, output), f)
 
 ops.reset_default_graph()
-
+# Training the model
 net = tflearn.input_data(shape=[None, len(training[0])])
 net = tflearn.fully_connected(net, 8)
 net = tflearn.fully_connected(net, 8)
@@ -80,6 +82,7 @@ model = tflearn.DNN(net)
 model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
 model.save("chatter.tflearn")
 
+# matching the perfect tag for the input
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
 
@@ -93,7 +96,7 @@ def bag_of_words(s, words):
             
     return numpy.array(bag)
 
-
+# The main chat function
 def chat():
     print("Start talking with the bot (type quit to stop)!")
     while True:
